@@ -50,22 +50,14 @@ var fs = require('fs'),
     }
     try{
         const filteredImageUrl = await filterImageFromURL(image_url);
-        console.log(filteredImageUrl)
-        const filePath = '/filtered-image/temp';
-        request.head(filteredImageUrl,  (err: any, res: any, body: any) => {
-            request(filteredImageUrl)
-                .pipe(fs.createWriteStream(filePath))
-                .on('close',  async () => {
-                    await  deleteLocalFiles([filePath]);
-                    res.download(filePath, filteredImageUrl);
-                });
-            if (err){
-                return res.sendStatus(500).send({
-                    errorMessage: err.message,
-                    message: "an error occurred while downloading image"
-                });
-            }
+        var stat = fs.statSync(filteredImageUrl);
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+            'Content-Length': stat.size
         });
+        var readStream = fs.createReadStream(filteredImageUrl);
+        readStream.pipe(res);
+        await  deleteLocalFiles([filteredImageUrl]);
     } catch (e) {
       console.log("error => ", e)
     }
