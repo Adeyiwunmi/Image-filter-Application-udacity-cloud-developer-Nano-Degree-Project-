@@ -33,15 +33,6 @@ var fs = require('fs'),
 
   //! END @TODO1
 
-  const download = (url: string, path: string, callback: any) => {
-        request.head(url, (err: any, res: any, body: any) => {
-          request(url)
-              .pipe(fs.createWriteStream(path))
-              .on('close', callback)
-        })
-      };
-
-
   app.get("/filteredimage", async (req, res) => {
     const {image_url} = req.query;
     if (!image_url){
